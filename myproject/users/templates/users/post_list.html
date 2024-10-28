@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Список постов{% endblock %}
+
+{% block content %}
+    <h1>Список постов</h1>
+    <ul>
+        {% for post in posts %}
+            <li>
+                <strong>{{ post.title }}</strong><br>
+                <em>Автор: {{ post.author.username }} | Дата: {{ post.created_at|date:"d.m.Y H:i" }}</em>
+                <p>{{ post.content }}</p>
+            </li>
+        {% empty %}
+            <li>Нет постов.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Кнопка для создания нового поста -->
+    <a href="{% url 'post_create' %}">
+        <button>Создать новый пост</button>
+    </a>
+{% endblock %}
