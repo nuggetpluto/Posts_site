@@ -3,12 +3,15 @@
 {% block title %}Личный кабинет{% endblock %}
 
 {% block content %}
-    <h1>Личный кабинет пользователя</h1>
-    <p>Имя пользователя: {{ user.username }}</p>
-    <p>Email: {{ user.email }}</p>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title">Личный кабинет пользователя</h1>
+            <img src="{{ user.userprofile.avatar.url }}" class="img-thumbnail mb-3" alt="Аватар пользователя">
+            <p>Имя пользователя: {{ user.username }}</p>
+            <p>Email: {{ user.email }}</p>
+            <p>О себе: {{ user.userprofile.bio }}</p>
 
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Выйти</button>
-    </form>
+            <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary mt-3">Редактировать профиль</a>
+        </div>
+    </div>
 {% endblock %}

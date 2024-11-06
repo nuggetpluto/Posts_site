@@ -1,9 +1,59 @@
-{% extends 'base.html' %}
-
-{% block title %}{{ post.title }}{% endblock %}
+{% extends "base.html" %}
 
 {% block content %}
-    <h2>{{ post.title }}</h2>
-    <p>{{ post.content }}</p>
-    <p>Автор: {{ post.author }} | Дата: {{ post.created_at }}</p>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">{{ post.title }}</h2>
+            <p class="card-text">{{ post.content }}</p>
+            <p class="text-muted">Автор: {{ post.author }}</p>
+        </div>
+    </div>
+
+    <!-- Комментарии -->
+    <h4>Комментарии</h4>
+    <div class="list-group mb-4">
+        {% for comment in comments %}
+            <div class="list-group-item">
+                <strong>{{ comment.author }}</strong> - {{ comment.date_posted }}
+                <p>{{ comment.content }}</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Кнопка для добавления комментария -->
+    <div id="add-comment-section" class="mb-4">
+        <button id="show-comment-form-btn" class="btn btn-outline-primary">Написать комментарий</button>
+    </div>
+
+    <!-- Форма для добавления комментария (изначально скрыта) -->
+    <div id="comment-form-section" class="mb-4" style="display: none;">
+        <form method="post">
+            {% csrf_token %}
+            {{ comment_form.as_p }}
+            <button type="submit" class="btn btn-primary">Добавить комментарий</button>
+        </form>
+    </div>
+
+    <!-- Лайки -->
+    <h4>Лайки</h4>
+    <form method="post" action="{% url 'like_post' post.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">
+            👍 Лайк ({{ post.likes.count }})
+        </button>
+    </form>
+
+    <!-- JavaScript для отображения формы -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const showCommentFormBtn = document.getElementById("show-comment-form-btn");
+            const commentFormSection = document.getElementById("comment-form-section");
+
+            showCommentFormBtn.addEventListener("click", function() {
+                // Скрыть кнопку и показать форму
+                showCommentFormBtn.style.display = "none";
+                commentFormSection.style.display = "block";
+            });
+        });
+    </script>
 {% endblock %}

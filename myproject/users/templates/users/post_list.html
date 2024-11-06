@@ -3,21 +3,59 @@
 {% block title %}Список постов{% endblock %}
 
 {% block content %}
-    <h1>Список постов</h1>
-    <ul>
+<div class="container mt-5">
+    <h1 class="mb-4">Список постов</h1>
+
+    <div class="row">
         {% for post in posts %}
-            <li>
-                <strong>{{ post.title }}</strong><br>
-                <em>Автор: {{ post.author.username }} | Дата: {{ post.created_at|date:"d.m.Y H:i" }}</em>
-                <p>{{ post.content }}</p>
-            </li>
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <!-- Аватар пользователя -->
+                            <img src="{{ post.author.userprofile.avatar.url }}" alt="Аватар пользователя" class="rounded-circle" width="50" height="50">
+                            <!-- Информация об авторе -->
+                            <div class="ms-3">
+                                <h5 class="card-title mb-1">
+                                    <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
+                                </h5>
+                                <h6 class="card-subtitle text-muted">
+                                    Автор: {{ post.author.username }} | Дата: {{ post.created_at|date:"d.m.Y H:i" }}
+                                </h6>
+                            </div>
+                        </div>
+                        <p class="card-text">{{ post.content|truncatewords:20 }}</p>
+
+                        <!-- Лайк и Комментарий -->
+                        <div class="d-flex justify-content-between">
+                            <!-- Кнопка лайка -->
+                            <form method="post" action="{% url 'like_post' post.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">
+                                    👍 Лайк ({{ post.likes.count }})
+                                </button>
+                            </form>
+
+                            <!-- Кнопка перехода к комментариям -->
+                            <a href="{% url 'post_detail' post.pk %}" class="btn btn-outline-primary">
+                                💬 Комментарии
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         {% empty %}
-            <li>Нет постов.</li>
+            <div class="col-12">
+                <div class="alert alert-warning" role="alert">
+                    Нет постов.
+                </div>
+            </div>
         {% endfor %}
-    </ul>
+    </div>
 
     <!-- Кнопка для создания нового поста -->
-    <a href="{% url 'post_create' %}">
-        <button>Создать новый пост</button>
-    </a>
+    <div class="mt-4">
+        <a href="{% url 'post_create' %}" class="btn btn-primary">Создать новый пост</a>
+    </div>
+</div>
 {% endblock %}

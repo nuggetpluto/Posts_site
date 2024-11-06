@@ -2,36 +2,58 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from .models import Post
-from .forms import PostForm
+from .models import Post, Comment, Like, UserProfile
+from .forms import PostForm, CustomUserCreationForm, CommentForm, UserProfileForm
 from django.contrib.auth.views import LogoutView
+from django.contrib import messages
 
 
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            return redirect('home')  # Измените на имя вашего главного представления
+            email = form.cleaned_data.get('email')
+            messages.success(request, f'Ваш аккаунт был создан, {email}! Теперь вы можете войти.')
+            return redirect('login')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'users/register.html', {'form': form})
 
 
 def login_view(request):
-    # Логика входа пользователя
     return render(request, 'users/login.html')
 
 
 def post_list(request):
-    posts = Post.objects.all().order_by('-created_at')  # Получение всех постов
+    posts = Post.objects.all().order_by('-created_at')
     return render(request, 'users/post_list.html', {'posts': posts})
 
 
+@login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    return render(request, 'users/post_detail.html', {'post': post})
+    comments = post.comments.all()
+    new_comment = None
+
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.post = post
+            new_comment.author = request.user
+            new_comment.save()
+            return redirect('post_detail', pk=post.pk)
+    else:
+        comment_form = CommentForm()
+
+    context = {
+        'post': post,
+        'comments': comments,
+        'comment_form': comment_form,
+    }
+
+    return render(request, 'users/post_detail.html', context)
 
 
 @login_required
@@ -50,10 +72,10 @@ def post_create(request):
 
 
 def home(request):
-    return render(request, 'users/home.html')  # Создадим шаблон home.html
+    return render(request, 'users/home.html')
 
 
-@login_required  # Ограничиваем доступ только для авторизованных пользователей
+@login_required
 def profile(request):
     return render(request, 'users/profile.html', {'user': request.user})
 
@@ -61,3 +83,26 @@ def profile(request):
 class CustomLogoutView(LogoutView):
     template_name = 'users/logged_out.html'
 
+
+@login_required
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    like, created = Like.objects.get_or_create(post=post, user=request.user)
+    if not created:
+        like.delete()
+
+    # Возвращаем пользователя обратно на страницу, с которой был сделан запрос
+    return redirect(request.META.get('HTTP_REFERER', 'post_list'))
+
+
+@login_required
+def edit_profile(request):
+    user_profile, created = UserProfile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=user_profile)
+    return render(request, 'users/edit_profile.html', {'form': form})
