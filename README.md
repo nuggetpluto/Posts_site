@@ -15,39 +15,7 @@
 
 ## Структура проекта
 
-```
-my_django_project/
-│
-├── myproject/
-│   ├── __init__.py
-│   ├── asgi.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-│
-├── static/
-│
-├── users/
-│   ├── migrations/
-│   │   └── 0001_initial.py
-│   │
-│   ├── templates/
-│   │   ├── registration/
-│   │   │   └── login.html
-│   │   └── users/
-│   │       ├── home.html
-│   │       ├── logged_out.html
-│   │       ├── navbar.html
-│   │       ├── post_detail.html
-│   │       ├── post_form.html
-│   │       ├── post_list.html
-│   │       ├── profile.html
-│   │       └── register.html
-│
-├── db.sqlite3
-├── manage.py
-└── requirements.txt
-```
+
 
 ## Установка и запуск
 
@@ -106,6 +74,37 @@ my_django_project/
 Пользователь может изменить свой аватар, описание и другие данные.  
 ![Редактирование профиля](myproject/imgs_for_readme/edit_profile.png)
 
-## Дополнительная информация
 
-Проект разработан на Django с использованием встроенного функционала для управления пользователями и постами. Возможности включают гибкость в дальнейших доработках, таких как добавление дополнительных функций для взаимодействия пользователей с постами.
+```
+my_django_project/
+│
+├── myproject/
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│
+├── static/
+│
+├── users/
+│   ├── migrations/
+│   │   └── 0001_initial.py
+│   │
+│   ├── templates/
+│   │   ├── registration/
+│   │   │   └── login.html
+│   │   └── users/
+│   │       ├── home.html
+│   │       ├── logged_out.html
+│   │       ├── navbar.html
+│   │       ├── post_detail.html
+│   │       ├── post_form.html
+│   │       ├── post_list.html
+│   │       ├── profile.html
+│   │       └── register.html
+│
+├── db.sqlite3
+├── manage.py
+└── requirements.txt
+```
