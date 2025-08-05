@@ -21,7 +21,7 @@
 
 1. Клонируйте репозиторий:
    ```bash
-   git clone https://github.com/username/django_project.git
+   git clone https://github.com/nuggetpluto/Posts_site.git
    ```
 
 2. Установите зависимости:
